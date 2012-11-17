@@ -1,0 +1,20 @@
+a:=3;
+b:=(4+a) *c;
+PRINT -a;
+PRINT b;
+IF a = 3 THEN
+  b := 5;
+ELSE
+  b := 3;
+FI
+
+PRINT b;
+
+WHILE b < 10 DO
+  b := b+1;
+  PRINT b;
+  IF b > 8 THEN
+    PRINT 0;
+  FI
+OD
+
