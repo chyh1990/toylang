@@ -109,6 +109,7 @@ struct op_contex{
 void gen_stmtseq(struct op_contex* ctx, struct ast_node* list);
 struct op_contex* init_op_ctx();
 const char* opcode2string(int op);
+void gencode(struct op_contex* ctx, struct ast_node* root);
 
 #define CALLID_BUILTIN_PRINT 0x01
 

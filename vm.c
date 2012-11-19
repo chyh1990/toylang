@@ -26,6 +26,7 @@ struct vm_contex *vm_create()
   vm->stack = (NUM_TYPE*)malloc(sizeof(NUM_TYPE)*VM_MAXSTACK); 
   vm->pc = 0;
   vm->sp = 0;
+  return vm;
 }
 
 

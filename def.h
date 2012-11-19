@@ -110,6 +110,7 @@ static inline struct ast_node* new_ast_seq()
 {
   struct ast_node* n = new_astnode(AST_STMTSEQ); 
   STAILQ_INIT(&n->u.seq.list);
+  return n;
 }
 
 struct ast_node* number(NUM_TYPE num);

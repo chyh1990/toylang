@@ -81,6 +81,7 @@ struct ast_node* new_ast_expr(int op, struct ast_node* lhs, struct ast_node* rhs
   n->u.expr.lhs = lhs;
   n->u.expr.rhs = rhs;
   n->u.expr.op = op;
+  return n;
 }
 
 struct ast_node* number(NUM_TYPE num)
@@ -154,5 +155,6 @@ struct ast_node* assignment(struct ast_node* lhs, struct ast_node* rhs)
   n->u.stmt.t = STMT_ASSIGN;
   n->u.stmt.u.assign.id = lhs;
   n->u.stmt.u.assign.expr = rhs;
+  return n;
 }
 
