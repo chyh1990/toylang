@@ -29,8 +29,9 @@
 "DO"     { return DO; }
 "OD"     { return OD; }
 "PRINT"  { return PRINT; }
+"FUNCTION" {return FUNCTION; }
 [0-9]+   { yylval.num = atoi(yytext); return NUMBER; }
-[a-z]    { yylval.num = yytext[0] - 'a'; return NAME; }   
+[_a-z]+    { yylval.id = yytext[0]-'a'; return NAME; }   
 \n       { nextline(); }
 [ \t]+       { ; }
 "//".*\n { nextline(); }

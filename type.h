@@ -20,6 +20,6 @@
 #define __MY_TYPE_H
 
 #define NUM_TYPE int
-#define ID_TYPE  int
+#define ID_TYPE  int//const char*
 
 #endif

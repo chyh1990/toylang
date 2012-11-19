@@ -33,6 +33,7 @@
 %token WHILE
 %token DO
 %token OD
+%token FUNCTION
 %token PRINT
 %token <num> NUMBER
 %token <id> NAME

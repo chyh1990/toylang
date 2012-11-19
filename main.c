@@ -68,32 +68,32 @@ void print_ast_stmt(struct ast_stmt* stmt, int level)
     case STMT_ASSIGN:
       print_level(level);
       printf("LHS:\n");
-      print_tree(stmt->u.assign.id, level+1);
+      print_tree(stmt->assign.id, level+1);
       print_level(level);
       printf("RHS:\n");
-      print_tree(stmt->u.assign.expr, level+1);
+      print_tree(stmt->assign.expr, level+1);
       break;
     case STMT_WHILE:
       print_level(level);
       printf("COND:\n");
-      print_tree(stmt->u.statwhile.cond, level+1);
+      print_tree(stmt->statwhile.cond, level+1);
       print_level(level);
       printf("BODY:\n");
-      print_tree(stmt->u.statwhile.seq_body, level+1);
+      print_tree(stmt->statwhile.seq_body, level+1);
       break;
     case STMT_IF:
       print_level(level);
       printf("COND:\n");
-      print_tree(stmt->u.statif.cond, level+1);
+      print_tree(stmt->statif.cond, level+1);
       print_level(level);
       printf("THEN:\n");
-      print_tree(stmt->u.statif.seq_then, level+1);
+      print_tree(stmt->statif.seq_then, level+1);
       print_level(level);
       printf("ELSE:\n");
-      print_tree(stmt->u.statif.seq_else, level+1);
+      print_tree(stmt->statif.seq_else, level+1);
       break;
     case STMT_PRINT:
-      print_tree(stmt->u.print, level+1);
+      print_tree(stmt->print, level+1);
       break;
     default:
       printf("<UNKNOWN>");
@@ -115,14 +115,14 @@ static void print_tree(struct ast_node *node, int level)
       break;
     case AST_EXPR:
       print_ast_node(node);
-      print_tree(node->u.expr.lhs, level+1);
-      print_tree(node->u.expr.rhs, level+1);
+      print_tree(node->expr.lhs, level+1);
+      print_tree(node->expr.rhs, level+1);
       break;
     case AST_STMTSEQ:
       {
         struct ast_stmt* stmt = NULL;
         print_ast_node(node);
-        STAILQ_FOREACH(stmt, &node->u.seq.list, next){
+        STAILQ_FOREACH(stmt, &node->seq.list, next){
           print_ast_stmt(stmt, level+1);
         }
       }
@@ -141,12 +141,12 @@ NUM_TYPE eval_expr(struct interp_contex* ctx, struct ast_node* expr)
   if(!expr) return 0;
   switch(expr->t){
     case AST_NUM:
-      return expr->u.val;
+      return expr->val;
     case AST_ID:
-      return ctx->reg[expr->u.id];
+      return ctx->reg[expr->id];
     case AST_EXPR:
       {
-        struct ast_expr* e = &expr->u.expr;
+        struct ast_expr* e = &expr->expr;
         NUM_TYPE rhs = eval_expr(ctx, e->rhs);
         NUM_TYPE lhs = eval_expr(ctx, e->lhs);
 #define __CASE(op, cmp) case op: return lhs cmp rhs
@@ -182,23 +182,23 @@ void eval_stmtseq(struct interp_contex* ctx, struct ast_node* list)
 {
   ASSERT_AST_TYPE(list, AST_STMTSEQ);
   struct ast_stmt* stmt = NULL;
-  STAILQ_FOREACH(stmt, &list->u.seq.list, next){
+  STAILQ_FOREACH(stmt, &list->seq.list, next){
     switch(stmt->t){
       case STMT_ASSIGN:
         {
-          NUM_TYPE rhs = eval_expr(ctx, stmt->u.assign.expr);
-          ctx->reg[stmt->u.assign.id->u.id] = rhs;
+          NUM_TYPE rhs = eval_expr(ctx, stmt->assign.expr);
+          ctx->reg[stmt->assign.id->id] = rhs;
         }
         break;
       case STMT_PRINT:
         {
-          NUM_TYPE rhs = eval_expr(ctx, stmt->u.print);
+          NUM_TYPE rhs = eval_expr(ctx, stmt->print);
           printf("OUTPUT: %d\n", rhs);
         }
         break;
       case STMT_IF:
         {
-          struct ast_stmt_if *stmtif = &stmt->u.statif;
+          struct ast_stmt_if *stmtif = &stmt->statif;
           assert(stmtif->cond);
           NUM_TYPE cond = eval_expr(ctx, stmtif->cond);
           if(cond){
@@ -212,7 +212,7 @@ void eval_stmtseq(struct interp_contex* ctx, struct ast_node* list)
         break;
       case STMT_WHILE:
         {
-          struct ast_stmt_while *stmtwhile = &stmt->u.statwhile;
+          struct ast_stmt_while *stmtwhile = &stmt->statwhile;
           assert(stmtwhile->cond);
           while(1){
             NUM_TYPE cond = eval_expr(ctx, stmtwhile->cond);

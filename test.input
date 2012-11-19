@@ -13,7 +13,7 @@ PRINT b;
 WHILE b < 10 DO
   b := b+1;
   PRINT b;
-  IF b > 8 THEN
+  IF b >= 8 THEN
     PRINT 0;
   FI
 OD

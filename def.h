@@ -75,7 +75,7 @@ struct ast_stmt{
     struct ast_stmt_if statif;
     struct ast_stmt_while statwhile;
     struct ast_stmt_assign assign;
-  }u;
+  };
   STAILQ_ENTRY(ast_stmt) next;
 };
 
@@ -94,7 +94,7 @@ struct ast_node{
 
     NUM_TYPE val;
     ID_TYPE  id;
-  }u;
+  };
 };
 
 #define MALLOC(type) ((type *)malloc(sizeof(type)))
@@ -109,7 +109,7 @@ static inline struct ast_node* new_astnode(enum AST_NODE_TYPE t){
 static inline struct ast_node* new_ast_seq()
 {
   struct ast_node* n = new_astnode(AST_STMTSEQ); 
-  STAILQ_INIT(&n->u.seq.list);
+  STAILQ_INIT(&n->seq.list);
   return n;
 }
 

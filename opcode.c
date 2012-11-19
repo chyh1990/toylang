@@ -47,17 +47,17 @@ void gen_expr(struct op_contex* ctx, struct ast_node *expr)
   if(!expr) return ;
   switch(expr->t){
     case AST_NUM:
-      t1 = cache_append(&ctx->cconst, expr->u.val);
+      t1 = cache_append(&ctx->cconst, expr->val);
       check_maxval(ctx);
       tpc = genINSN(ctx, NEW_INSN(OP_PUSH_CONST, t1));
       break;
     case AST_ID:
-      t1 = expr->u.id;
+      t1 = expr->id;
       tpc = genINSN(ctx, NEW_INSN(OP_PUSH_ID, t1));
       break;
     case AST_EXPR:
       {
-        struct ast_expr* e = &expr->u.expr;
+        struct ast_expr* e = &expr->expr;
         gen_expr(ctx, e->rhs);
         gen_expr(ctx, e->lhs);
 #define __CASE(op, oc) case op: genINSN(ctx, NEW_INSN(oc, 0)); break;
@@ -106,23 +106,23 @@ void gen_stmtseq(struct op_contex* ctx, struct ast_node* list)
 {
   ASSERT_AST_TYPE(list, AST_STMTSEQ);
   struct ast_stmt* stmt = NULL;
-  STAILQ_FOREACH(stmt, &list->u.seq.list, next){
+  STAILQ_FOREACH(stmt, &list->seq.list, next){
     switch(stmt->t){
       case STMT_ASSIGN:
         {
-          gen_expr(ctx, stmt->u.assign.expr);
-          genINSN(ctx, NEW_INSN(OP_STORE, stmt->u.assign.id->u.id));
+          gen_expr(ctx, stmt->assign.expr);
+          genINSN(ctx, NEW_INSN(OP_STORE, stmt->assign.id->id));
         }
         break;
       case STMT_PRINT:
         {
-          gen_expr(ctx, stmt->u.print);
+          gen_expr(ctx, stmt->print);
           genINSN(ctx, NEW_INSN(OP_CALL, CALLID_BUILTIN_PRINT));
         }
         break;
       case STMT_IF:
         {
-          struct ast_stmt_if *stmtif = &stmt->u.statif;
+          struct ast_stmt_if *stmtif = &stmt->statif;
           assert(stmtif->cond);
           gen_expr(ctx, stmtif->cond);
           genINSN(ctx, NEW_INSN(OP_TEST,0));
@@ -140,7 +140,7 @@ void gen_stmtseq(struct op_contex* ctx, struct ast_node* list)
         break;
       case STMT_WHILE:
         {
-          struct ast_stmt_while *stmtwhile = &stmt->u.statwhile;
+          struct ast_stmt_while *stmtwhile = &stmt->statwhile;
           assert(stmtwhile->cond);
           int bpc = ctx->pc;
           gen_expr(ctx, stmtwhile->cond);
