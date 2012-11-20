@@ -26,6 +26,7 @@
 #include <sys/queue.h>
 
 #include "type.h"
+#include "symtable.h"
 #include "y.tab.h"
 
 enum AST_NODE_TYPE{
@@ -142,7 +143,7 @@ DEFINE_BINOP(ge, GE)
 
 #undef DEFINE_BINOP
 
-#define MAX_LOCALVAR 32
+#define MAX_LOCALVAR 240
 
 #define ASSERT_AST_TYPE(node, type) if(node){assert((node)->t == (type));}
 
@@ -154,6 +155,12 @@ static inline struct ast_node* neg(struct ast_node* rhs)
 
 void print_ast_node(struct ast_node* node);
 
+struct ast_context{
+  symtable_t * global_v;
+};
+
+void init_ast_context();
+struct ast_context *get_ast_context();
 
 #endif
 

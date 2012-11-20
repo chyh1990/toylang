@@ -52,8 +52,15 @@ void gen_expr(struct op_contex* ctx, struct ast_node *expr)
       tpc = genINSN(ctx, NEW_INSN(OP_PUSH_CONST, t1));
       break;
     case AST_ID:
-      t1 = expr->id;
+    {
+      symbol_t *sym = get_symbol(get_ast_context()->global_v, expr->id);
+      if(!sym){
+        fprintf(stderr, "undefined %s\n", expr->id);
+        exit(-1);
+      }
+      t1 = sym->id;
       tpc = genINSN(ctx, NEW_INSN(OP_PUSH_ID, t1));
+    }
       break;
     case AST_EXPR:
       {
@@ -110,8 +117,13 @@ void gen_stmtseq(struct op_contex* ctx, struct ast_node* list)
     switch(stmt->t){
       case STMT_ASSIGN:
         {
+          symbol_t *sym = add_symbol(get_ast_context()->global_v, stmt->assign.id->id);
+          if( sym->id >= MAX_LOCALVAR ){
+            fprintf(stderr, "Too many vars\n");
+            exit(-1);
+          }
           gen_expr(ctx, stmt->assign.expr);
-          genINSN(ctx, NEW_INSN(OP_STORE, stmt->assign.id->id));
+          genINSN(ctx, NEW_INSN(OP_STORE, sym->id));
         }
         break;
       case STMT_PRINT:
@@ -193,7 +205,7 @@ static void print_one_opcode(struct op_contex* ctx, INSN insn, int idx)
 {
   switch(OPCODE(insn)){
     case OP_PUSH_ID:
-      printf("%s\t%c", opcode2string(OPCODE(insn)), 'a'+OP_A(insn));
+      printf("%s\t%d", opcode2string(OPCODE(insn)), OP_A(insn));
       break;
     case OP_PUSH_CONST:
       printf("%s\t%d [%d]", opcode2string(OPCODE(insn)), OP_A(insn), cache_get(&ctx->cconst, OP_A(insn)));

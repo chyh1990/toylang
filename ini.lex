@@ -1,4 +1,5 @@
 %{
+#include <string.h>
 #include "type.h"
 #include "def.h"
 #include "y.tab.h"
@@ -31,7 +32,7 @@
 "PRINT"  { return PRINT; }
 "FUNCTION" {return FUNCTION; }
 [0-9]+   { yylval.num = atoi(yytext); return NUMBER; }
-[_a-z]+    { yylval.id = yytext[0]-'a'; return NAME; }   
+[_a-z]+    { yylval.id = strdup(yytext); return NAME; }   
 \n       { nextline(); }
 [ \t]+       { ; }
 "//".*\n { nextline(); }

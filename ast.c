@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include "def.h"
+#include "symtable.h"
 
 static const char *op2string(int op)
 {
@@ -57,7 +58,7 @@ void print_ast_node(struct ast_node* node)
   printf("NODE: %s ", asttype2string(node->t));
   switch(node->t){
     case AST_ID:
-      printf("< %c >", 'a'+node->id);
+      printf("< %s >", 'a'+node->id);
       break;
     case AST_NUM:
       printf("< %d >", node->val);
@@ -158,3 +159,13 @@ struct ast_node* assignment(struct ast_node* lhs, struct ast_node* rhs)
   return n;
 }
 
+static struct ast_context astctx;
+void init_ast_context()
+{
+  astctx.global_v = create_symbol_table("GLOBAL_VAR");  
+}
+
+struct ast_context *get_ast_context()
+{
+  return &astctx;
+}

@@ -136,6 +136,7 @@ struct interp_contex{
   NUM_TYPE reg[MAX_LOCALVAR];
 };
 
+
 NUM_TYPE eval_expr(struct interp_contex* ctx, struct ast_node* expr)
 {
   if(!expr) return 0;
@@ -143,7 +144,14 @@ NUM_TYPE eval_expr(struct interp_contex* ctx, struct ast_node* expr)
     case AST_NUM:
       return expr->val;
     case AST_ID:
-      return ctx->reg[expr->id];
+    {
+      symbol_t *sym = get_symbol(get_ast_context()->global_v, expr->id);
+      if(!sym){
+        fprintf(stderr, "%s undefined", expr->id);
+        exit(-1);
+      }
+      return ctx->reg[sym->id];
+    }
     case AST_EXPR:
       {
         struct ast_expr* e = &expr->expr;
@@ -187,7 +195,12 @@ void eval_stmtseq(struct interp_contex* ctx, struct ast_node* list)
       case STMT_ASSIGN:
         {
           NUM_TYPE rhs = eval_expr(ctx, stmt->assign.expr);
-          ctx->reg[stmt->assign.id->id] = rhs;
+          symbol_t *sym = add_symbol(get_ast_context()->global_v, stmt->assign.id->id);
+          if( sym->id >= MAX_LOCALVAR ){
+            fprintf(stderr, "Too many vars\n");
+            exit(-1);
+          }
+          ctx->reg[sym->id] = rhs;
         }
         break;
       case STMT_PRINT:
@@ -262,6 +275,7 @@ void execute(struct ast_node* ast_root)
 
 int main()
 {
+  init_ast_context();
   yyparse();
 } 
 

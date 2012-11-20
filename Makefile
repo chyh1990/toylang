@@ -1,5 +1,6 @@
 all: toylang 
-OBJS:= y.tab.o lex.yy.o main.o ast.o opcode.o vm.o
+OBJS:= y.tab.o lex.yy.o main.o ast.o opcode.o vm.o hashtable.o \
+				symtable.o
 CFLAGS+=-g
 
 toylang: $(OBJS)
@@ -11,7 +12,7 @@ y.tab.c y.tab.h: ini.y
 lex.yy.c: ini.lex
 	flex $^
 
-$(OBJS):  def.h type.h opcode.h vm.h
+$(OBJS):  def.h type.h opcode.h vm.h hashtable.h symtable.h
 
 clean:
 	rm -f *.o toylang y.tab.c y.tab.h lex.yy.c

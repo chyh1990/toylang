@@ -1,5 +1,6 @@
-a:=3;
-b:=(4+a) *c;
+ab:=3;
+a :=ab+1;
+b:=(4+a) *ab;
 PRINT -a;
 PRINT b;
 IF a = 3 THEN
